@@ -1,35 +1,72 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+"use client";
+
+import { useState } from "react";
+import Sidebar from "./components/Sidebar";
+import Dashboard from "./pages/Dashboard";
+import Categories from "./pages/Categories";
+import Products from "./pages/Products";
+import InvestmentPlans from "./pages/InvestmentPlans";
+import Gifts from "./pages/Gifts";
+import {
+  mockCategories,
+  mockProducts,
+  mockInvestmentPlans,
+  mockGifts,
+} from "./data/mockData";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [activePage, setActivePage] = useState("dashboard");
+  const [categories, setCategories] = useState(mockCategories);
+  const [products, setProducts] = useState(mockProducts);
+  const [investmentPlans, setInvestmentPlans] = useState(mockInvestmentPlans);
+  const [gifts, setGifts] = useState(mockGifts);
+
+  // Function to render the active page
+  const renderPage = () => {
+    switch (activePage) {
+      case "dashboard":
+        return (
+          <Dashboard
+            categoriesCount={categories.length}
+            productsCount={products.length}
+            plansCount={investmentPlans.length}
+            giftsCount={gifts.length}
+          />
+        );
+      case "categories":
+        return (
+          <Categories categories={categories} setCategories={setCategories} />
+        );
+      case "products":
+        return (
+          <Products
+            products={products}
+            setProducts={setProducts}
+            categories={categories}
+          />
+        );
+      case "investment-plans":
+        return (
+          <InvestmentPlans
+            investmentPlans={investmentPlans}
+            setInvestmentPlans={setInvestmentPlans}
+          />
+        );
+      case "gifts":
+        return <Gifts gifts={gifts} setGifts={setGifts} />;
+      default:
+        return <Dashboard />;
+    }
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className="flex h-screen bg-gray-100">
+      <Sidebar activePage={activePage} setActivePage={setActivePage} />
+      <div className="flex-1 overflow-auto">
+        <div className="p-6">{renderPage()}</div>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    </div>
+  );
 }
 
-export default App
+export default App;
